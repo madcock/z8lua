@@ -43,13 +43,11 @@ struct fix32
     // does too many implicit conversions from int that we can’t mark this
     // one as explicit.
     inline fix32(int32_t x)  : m_bits(int32_t(x << 16)) {}
-    inline fix32(int x)  : m_bits(int32_t(x << 16)) {}
-
+    
     inline explicit fix32(uint16_t x) : m_bits(int32_t(x << 16)) {}
     inline explicit fix32(uint32_t x) : m_bits(int32_t(x << 16)) {}
     inline explicit fix32(int64_t x)  : m_bits(int32_t(x << 16)) {}
     inline explicit fix32(uint64_t x) : m_bits(int32_t(x << 16)) {}
-    inline explicit fix32(size_t x) : m_bits(int32_t(x << 16)) {}
 
     // Support for long and unsigned long when it is a distinct
     // type from the standard int*_t types, e.g. on Windows.
@@ -71,7 +69,6 @@ struct fix32
     inline explicit operator uint32_t() const { return m_bits >> 16; }
     inline explicit operator int64_t()  const { return m_bits >> 16; }
     inline explicit operator uint64_t() const { return m_bits >> 16; }
-    inline explicit operator size_t() const { return m_bits >> 16; }
 
     // Additional casts for long and unsigned long on architectures where
     // these are not the same types as their cstdint equivalents.
@@ -199,11 +196,19 @@ struct fix32
         return frombits((uint32_t(x.bits()) >> y) | (x.bits() << (32 - y)));
     }
 
+#ifdef _3DS
+
     static inline fix32 ldexp(fix32 x, int y)
     {
         return fix32(std::ldexp((double)x, y));
     }
+    inline fix32(int x)  : m_bits(int32_t(x << 16)) {}
 
+    inline explicit operator size_t() const { return m_bits >> 16; }
+    
+    inline explicit fix32(size_t x) : m_bits(int32_t(x << 16)) {}
+
+#endif
 private:
     int32_t m_bits;
 };
