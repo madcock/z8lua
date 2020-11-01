@@ -48,7 +48,7 @@ struct fix32
     inline explicit fix32(uint32_t x) : m_bits(int32_t(x << 16)) {}
     inline explicit fix32(int64_t x)  : m_bits(int32_t(x << 16)) {}
     inline explicit fix32(uint64_t x) : m_bits(int32_t(x << 16)) {}
-
+    
     // Support for long and unsigned long when it is a distinct
     // type from the standard int*_t types, e.g. on Windows.
     template<typename T,
@@ -69,7 +69,7 @@ struct fix32
     inline explicit operator uint32_t() const { return m_bits >> 16; }
     inline explicit operator int64_t()  const { return m_bits >> 16; }
     inline explicit operator uint64_t() const { return m_bits >> 16; }
-
+    
     // Additional casts for long and unsigned long on architectures where
     // these are not the same types as their cstdint equivalents.
     template<typename T,
@@ -202,11 +202,21 @@ struct fix32
     {
         return fix32(std::ldexp((double)x, y));
     }
+
+    inline explicit fix32(size_t x) : m_bits(int32_t(x << 16)) {}
+
     inline fix32(int x)  : m_bits(int32_t(x << 16)) {}
 
     inline explicit operator size_t() const { return m_bits >> 16; }
     
-    inline explicit fix32(size_t x) : m_bits(int32_t(x << 16)) {}
+#endif
+
+#ifdef __SWITCH__
+
+    static inline fix32 ldexp(fix32 x, int y)
+    {
+        return fix32(std::ldexp((double)x, y));
+    }
 
 #endif
 private:
