@@ -219,12 +219,6 @@ struct fix32
     }
 
 #ifdef _3DS
-
-    static inline fix32 ldexp(fix32 x, int y)
-    {
-        return fix32(std::ldexp((double)x, y));
-    }
-
     inline explicit fix32(size_t x) : m_bits(int32_t(x << 16)) {}
 
     inline fix32(int x)  : m_bits(int(x << 16)) {}
@@ -233,14 +227,11 @@ struct fix32
     
 #endif
 
-#ifdef __SWITCH__
-
     static inline fix32 ldexp(fix32 x, int y)
     {
         return fix32(std::ldexp((double)x, y));
     }
 
-#endif
 private:
     int32_t m_bits;
 };
