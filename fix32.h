@@ -175,6 +175,7 @@ struct fix32
 
     static inline fix32 ceil(fix32 x) { return -floor(-x); }
     static inline fix32 floor(fix32 x) { return frombits(x.m_bits & 0xffff0000); }
+    static inline fix32 modf(fix32 x) { return frombits(x.m_bits & 0x0000ffff); }
 
     static fix32 pow(fix32 x, fix32 y) 
     {

@@ -56,13 +56,16 @@ static int pico8_flr(lua_State *l) {
     return 1;
 }
 
+//using modf to get fractional part of number here because bittboy build seems to have problems
+//with numbers > 1 (treats them as ints?)
+//would be better to just replace these with lookup tables using the fractional part
 static int pico8_cos(lua_State *l) {
-    lua_pushnumber(l, cast_num(std::cos(-TAU * (double)lua_tonumber(l, 1))));
+    lua_pushnumber(l, cast_num(std::cos(-TAU * (double)(lua_Number::modf(lua_tonumber(l, 1))))));
     return 1;
 }
 
 static int pico8_sin(lua_State *l) {
-    lua_pushnumber(l, cast_num(std::sin(-TAU * (double)lua_tonumber(l, 1))));
+    lua_pushnumber(l, cast_num(std::sin(-TAU * (double)(lua_Number::modf(lua_tonumber(l, 1))))));
     return 1;
 }
 
