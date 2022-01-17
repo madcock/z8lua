@@ -140,17 +140,33 @@ static int pico8_rotr(lua_State *l) {
 static int pico8_tostr(lua_State *l) {
     char buffer[20];
     char const *s = buffer;
-    auto hex = lua_toboolean(l, 2);
     // PICO-8 0.2.1 changelog: tostr() returns nil (used to return "[nil]")
     if (lua_isnone(l, 1))
         return 0;
+        
+    uint16_t flags = 0;
+    if (lua_isboolean(l, 2)){
+        flags = lua_toboolean(l, 2) ? 1 : 0;
+    }
+    else if (lua_isnumber(l, 2)){
+        flags = lua_tointeger(l, 2);
+    }
+
     switch (lua_type(l, 1))
     {
         case LUA_TNUMBER: {
             lua_Number x = lua_tonumber(l, 1);
-            if (hex) {
+            if (flags) {
                 uint32_t b = (uint32_t)x.bits();
-                sprintf(buffer, "0x%04x.%04x", (b >> 16) & 0xffff, b & 0xffff);
+                if ((flags & 0x3) == 0x3) {
+                    sprintf(buffer, "0x%04x%04x", (b >> 16) & 0xffff, b & 0xffff);
+                }
+                else if ((flags & 0x2) == 0x2) {
+                    sprintf(buffer, "%d", b);
+                }
+                else {
+                    sprintf(buffer, "0x%04x.%04x", (b >> 16) & 0xffff, b & 0xffff);
+                }
             } else {
                 lua_number2str(buffer, x);
             }
@@ -169,33 +185,80 @@ static int pico8_tostr(lua_State *l) {
         case LUA_TFUNCTION:
             // PICO-8 0.1.12d changelog: “tostr(x,true) can also be used to view
             // the hex value of functions and tables (uses Lua's tostring)”
-            if (hex) {
+            if (flags) {
                 luaL_tolstring(l, 1, NULL);
                 return 1;
             }
             [[fallthrough]];
-        default: sprintf(buffer, "[%s]", luaL_typename(l, 1)); break;
+        default:
+            sprintf(buffer, "[%s]", luaL_typename(l, 1));
+            break;
     }
     lua_pushstring(l, s);
     return 1;
 }
 
 static int pico8_tonum(lua_State *l) {
-    if (lua_gettop(l) < 1) {
+    int numargs = lua_gettop(l);
+    if (numargs < 1) {
         return 0;
     }
-    if (lua_isnumber(l, 1)) {
-        lua_pushnumber(l, lua_tonumber(l, 1));
+    
+    uint16_t flags = numargs > 1 ? lua_tointeger(l, 2) : 0;
+
+    if (lua_isboolean(l, 1)){
+        lua_pushnumber(l, lua_toboolean(l, 1));
         return 1;
     }
     if (lua_isstring(l, 1)) {
-        char const *s = lua_tostring(l, 1);
+        const char *s = lua_tostring(l, 1);
+        char hexBuffer[9];
+        if (flags) {
+            bool shifted = (flags & 0x2) == 0x2;
+            bool hex = (flags & 0x1) == 0x1;
+            if (hex){
+                size_t i = 0;
+
+                while (s[i] != '\0'){
+                    //if non-hex character
+                    if ( s[i] < 48 || 
+                        (s[i] > 57 && s[i] < 65) ||
+                        (s[i] > 70 && s[i] < 97) ||
+                         s[i] > 102){
+                        hexBuffer[i] = '0';
+                    }
+                    else {
+                        hexBuffer[i] = s[i];
+                    }
+                    i++;
+                }
+
+                uint32_t bits = strtol(hexBuffer, NULL, 16);
+                if (shifted) {
+                    bits = bits >> 16;
+                }
+                lua_pushnumber(l, (lua_Number)bits);
+                return 1; 
+            }
+            else if (shifted){
+                int32_t bits = strtol(hexBuffer, NULL, 16);
+                lua_pushnumber(l, (lua_Number)bits);
+                return 1;
+            }
+            
+        }
+
         lua_Number ret;
         // If parsing failed, PICO-8 returns nothing
         if (!luaO_str2d(s, strlen(s), &ret)) return 0;
         lua_pushnumber(l, ret);
         return 1;
     }
+    if (lua_isnumber(l, 1)) {
+        lua_pushnumber(l, lua_tonumber(l, 1));
+        return 1;
+    }
+    
 
     return 0;
 }
