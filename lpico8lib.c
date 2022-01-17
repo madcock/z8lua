@@ -209,7 +209,7 @@ static int pico8_tonum(lua_State *l) {
     if (numargs < 1) {
         return 0;
     }
-    
+
     uint16_t flags = numargs > 1 ? lua_tointeger(l, 2) : 0;
 
     if (lua_isboolean(l, 1)){
@@ -247,7 +247,8 @@ static int pico8_tonum(lua_State *l) {
                 return 1; 
             }
             else if (shifted){
-                int32_t bits = strtol(hexBuffer, NULL, 16);
+                uint32_t bits = strtol(s, NULL, 10);
+                bits = bits >> 16;
                 lua_pushnumber(l, (lua_Number)bits);
                 return 1;
             }
