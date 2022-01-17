@@ -271,8 +271,14 @@ static int pico8_tonum(lua_State *l) {
 }
 
 static int pico8_chr(lua_State *l) {
-    char s[2] = { (char)(uint8_t)lua_tonumber(l, 1), '\0' };
-    lua_pushlstring(l, s, 1);
+    int numargs = lua_gettop(l);
+    //pico 8's lua seems to top out at allowing 248 arguments
+    char s[249];
+    s[numargs] = '\0';
+    for(int i = 0; i < numargs; i++) {
+        s[i] = (char)(uint8_t)lua_tonumber(l, i + 1);
+    }
+    lua_pushlstring(l, s, numargs);
     return 1;
 }
 
