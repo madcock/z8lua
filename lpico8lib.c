@@ -140,9 +140,6 @@ static int pico8_rotr(lua_State *l) {
 static int pico8_tostr(lua_State *l) {
     char buffer[20];
     char const *s = buffer;
-    // PICO-8 0.2.1 changelog: tostr() returns nil (used to return "[nil]")
-    if (lua_isnone(l, 1))
-        return 0;
         
     uint16_t flags = 0;
     if (lua_isboolean(l, 2)){
