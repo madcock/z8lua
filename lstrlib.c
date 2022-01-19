@@ -54,7 +54,15 @@ static int str_sub (lua_State *L) {
   size_t l;
   const char *s = luaL_checklstring(L, 1, &l);
   size_t start = posrelat(luaL_checkinteger(L, 2), l);
-  size_t end = posrelat(luaL_optinteger(L, 3, -1), l);
+  size_t end = l;
+  if (lua_gettop(L) > 2) {
+    if (lua_isnumber(L, 3)) {
+      end = posrelat(lua_tonumber(L, 3), l);
+    }
+    else {
+      end = start;
+    }
+  }
   if (start < 1) start = 1;
   if (end > l) end = l;
   if (start <= end)
