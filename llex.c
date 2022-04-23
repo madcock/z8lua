@@ -437,10 +437,10 @@ static int llex (LexState *ls, SemInfo *seminfo) {
         ls->atsol = atsol;  /* still at sol if we already were. */
         break;
       }
-      case '?': {  /* '?' at start of line */
+      case '?': {  /* '?' not in a string */
         next(ls);
-        if (atsol == 1) { ls->emiteol = 1; return TK_PRINT; }
-        return '?';
+        ls->emiteol = 1; 
+        return TK_PRINT;
       }
       case '-': {  /* '-' or '-=' or '--' (comment) */
         next(ls);
