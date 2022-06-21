@@ -563,7 +563,16 @@ void luaV_finishOp (lua_State *L) {
 #define vmcase(l,b)	case l: {b}  break;
 #define vmcasenb(l,b)	case l: {b}		/* nb = no break */
 
+//turn off optimizations for this method.
+//OP_FORLOOP doesn't correctly detect wrapping in certain cases if optimization is on and aggressive
+#if __clang__
+[[clang::optnone]]
 void luaV_execute (lua_State *L) {
+#elif __GNUC__
+void __attribute__((optimize("O0"))) luaV_execute (lua_State *L) {
+#else
+void luaV_execute (lua_State *L) {
+#endif
   CallInfo *ci = L->ci;
   LClosure *cl;
   TValue *k;
