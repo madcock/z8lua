@@ -301,6 +301,8 @@ static int pico8_ord(lua_State *l) {
     if (n < 0 || size_t(n + count) > len)
         return 0;
 
+    //min stack is only 20. This could be a much longer string
+    lua_checkstack(l, count);
     for(int i = 0; i < count; i++) {
         lua_pushnumber(l, uint8_t(s[n + i]));
     }
