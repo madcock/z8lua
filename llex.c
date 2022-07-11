@@ -280,7 +280,9 @@ static int skip_sep (LexState *ls) {
 }
 
 
+//ATTN: long comments still don't match pico-8 behavior
 static void read_long_string (LexState *ls, SemInfo *seminfo, int sep) {
+  int cont = 0;
   save_and_next(ls);  /* skip 2nd `[' */
   if (currIsNewline(ls))  /* string starts with a newline? */
     inclinenumber(ls);  /* skip it */
@@ -290,9 +292,21 @@ static void read_long_string (LexState *ls, SemInfo *seminfo, int sep) {
         lexerror(ls, (seminfo) ? "unfinished long string" :
                                  "unfinished long comment", TK_EOS);
         break;  /* to avoid warnings */
+      
+      case '[': {
+        save_and_next(ls);
+        if (ls->current == '[') {
+            save_and_next(ls);  /* skip 2nd `[' */
+            cont++;
+        }
+        break;
+      }
       case ']': {
         if (skip_sep(ls) == sep) {
           save_and_next(ls);  /* skip 2nd `]' */
+          cont--;
+          if (cont >= 0)
+            break;
           goto endloop;
         }
         break;
