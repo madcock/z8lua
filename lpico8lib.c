@@ -351,6 +351,23 @@ static int pico8_split(lua_State *l) {
     return 1;
 }
 
+//discussion here: https://www.lexaloffle.com/bbs/?tid=47314
+static int pico8_inext (lua_State *L) {
+  luaL_checktype(L, 1, LUA_TTABLE);
+  int i;
+  if (lua_isnil(L, 2)){
+    i = 0;
+    lua_pushinteger(L, i);
+  }
+  else {
+    i = luaL_checkint(L, 2);
+  }
+  i++;  /* next value */
+  lua_pushinteger(L, i);
+  lua_rawgeti(L, 1, i);
+  return (lua_isnil(L, -1)) ? 1 : 2;
+}
+
 static const luaL_Reg pico8lib[] = {
   {"max",   pico8_max},
   {"min",   pico8_min},
@@ -377,6 +394,9 @@ static const luaL_Reg pico8lib[] = {
   {"chr",   pico8_chr},
   {"ord",   pico8_ord},
   {"split", pico8_split},
+  //added in PICO-8 0.2.5
+  //discussion here: https://www.lexaloffle.com/bbs/?tid=47314
+  {"inext", pico8_inext},
   {NULL, NULL}
 };
 
