@@ -311,6 +311,11 @@ static int pico8_ord(lua_State *l) {
 }
 
 static int pico8_split(lua_State *l) {
+    int numArgs = lua_gettop(l);
+    if (numArgs == 0){
+        return 0;
+    }
+
     if (lua_isnil(l, 1)) {
         return 0;
     }
