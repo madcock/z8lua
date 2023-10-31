@@ -348,7 +348,12 @@ LUA_API lua_Number lua_tonumberx (lua_State *L, int idx, int *isnum) {
   }
   else {
     if (isnum) *isnum = 0;
+#if !defined(TYPE_CONVERSION_FIXES)
     return 0;
+#else
+    return (int8_t)0;
+#endif
+
   }
 }
 

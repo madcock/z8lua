@@ -187,7 +187,11 @@ struct fix32
 
     static fix32 pow(fix32 x, int y) 
     {
+#if !defined(TYPE_CONVERSION_FIXES)
         fix32 res = 1;
+#else
+        fix32 res = (int8_t)1;
+#endif
         if (y > 0) {
             for(int i = 0; i < y; i++) {
                 res *= x;

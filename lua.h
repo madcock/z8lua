@@ -18,7 +18,11 @@
 
 #define LUA_VERSION_MAJOR	"5"
 #define LUA_VERSION_MINOR	"2"
+#if !defined(TYPE_CONVERSION_FIXES)
 #define LUA_VERSION_NUM		502
+#else
+#define LUA_VERSION_NUM		(int8_t)502
+#endif
 #define LUA_VERSION_RELEASE	"4"
 
 #define LUA_VERSION	"Lua+Eris " LUA_VERSION_MAJOR "." LUA_VERSION_MINOR

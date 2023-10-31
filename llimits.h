@@ -90,7 +90,11 @@ typedef LUAI_UACNUMBER l_uacNumber;
 #endif
 
 
+#if !defined(TYPE_CONVERSION_FIXES)
 #define cast(t, exp)	((t)(exp))
+#else
+#define cast(t, exp)	((t)((int8_t)exp))
+#endif
 
 #define cast_byte(i)	cast(lu_byte, (i))
 #define cast_num(i)	cast(lua_Number, (i))
@@ -271,7 +275,11 @@ union luai_Cast { double l_d; LUA_INT32 l_p[2]; };
 /* on several machines, coercion from unsigned to double is slow,
    so it may be worth to avoid */
 #define lua_unsigned2number(u)  \
+#if !defined(TYPE_CONVERSION_FIXES)
     (((u) <= (lua_Unsigned)INT_MAX) ? (lua_Number)(int)(u) : (lua_Number)(u))
+#else
+    (((u) <= (lua_Unsigned)INT_MAX) ? (lua_Number)(int8_t)(u) : (lua_Number)(int8_t)(u))
+#endif
 #endif
 
 

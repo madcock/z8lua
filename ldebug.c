@@ -38,7 +38,11 @@ static const char *getfuncname (lua_State *L, CallInfo *ci, const char **name);
 
 static int currentpc (CallInfo *ci) {
   lua_assert(isLua(ci));
+#if !defined(TYPE_CONVERSION_FIXES)
   return pcRel(ci->u.l.savedpc, ci_func(ci)->p);
+#else
+  return 0;
+#endif
 }
 
 

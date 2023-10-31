@@ -548,7 +548,11 @@ static int f_seek (lua_State *L) {
   static const char *const modenames[] = {"set", "cur", "end", NULL};
   FILE *f = tofile(L);
   int op = luaL_checkoption(L, 2, "cur", modenames);
+#if !defined(TYPE_CONVERSION_FIXES)
   lua_Number p3 = luaL_optnumber(L, 3, 0);
+#else
+  lua_Number p3 = luaL_optnumber(L, 3, (int8_t)0);
+#endif
   l_seeknum offset = (l_seeknum)p3;
   luaL_argcheck(L, (lua_Number)offset == p3, 3,
                   "not an integer in proper range");
