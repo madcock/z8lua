@@ -51,6 +51,10 @@ const char lua_ident[] =
 #define api_checkstackindex(L, i, o)  \
 	api_check(L, isstackindex(i, o), "index not in the stack")
 
+extern "C" {
+void xlog(const char *fmt, ...);
+#define XLOG(format, ...) xlog("%s:%d:%s " format, __FILE__, __LINE__, __func__, ##__VA_ARGS__)
+}
 
 static TValue *index2addr (lua_State *L, int idx) {
   CallInfo *ci = L->ci;
@@ -136,7 +140,9 @@ LUA_API lua_CFunction lua_atpanic (lua_State *L, lua_CFunction panicf) {
 
 LUA_API void lua_setpico8memory (lua_State *L, unsigned char const *p) {
   lua_lock(L);
+XLOG("before G(L)->pico8memory = p;\n");
   G(L)->pico8memory = p;
+XLOG("after G(L)->pico8memory = p;\n");
   lua_unlock(L);
 }
 
