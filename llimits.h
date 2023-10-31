@@ -271,15 +271,14 @@ union luai_Cast { double l_d; LUA_INT32 l_p[2]; };
 #endif				/* } */
 
 
-#if !defined(lua_unsigned2number)
 /* on several machines, coercion from unsigned to double is slow,
    so it may be worth to avoid */
-#define lua_unsigned2number(u)  \
 #if !defined(TYPE_CONVERSION_FIXES)
+#define lua_unsigned2number(u)  \
     (((u) <= (lua_Unsigned)INT_MAX) ? (lua_Number)(int)(u) : (lua_Number)(u))
 #else
+#define lua_unsigned2number(u)  \
     (((u) <= (lua_Unsigned)INT_MAX) ? (lua_Number)(int8_t)(u) : (lua_Number)(int8_t)(u))
-#endif
 #endif
 
 
