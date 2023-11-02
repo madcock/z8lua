@@ -51,7 +51,10 @@
 #define luai_makeseed()		cast(unsigned int, time(NULL))
 #endif
 
-
+extern "C" {
+void xlog(const char *fmt, ...);
+#define XLOG(format, ...) xlog("%s:%d:%s " format, __FILE__, __LINE__, __func__, ##__VA_ARGS__)
+}
 
 /*
 ** thread state + extra space
@@ -268,7 +271,9 @@ LUA_API lua_State *lua_newstate (lua_Alloc f, void *ud) {
   lua_State *L;
   global_State *g;
   LG *l = cast(LG *, (*f)(ud, NULL, LUA_TTHREAD, sizeof(LG)));
+  XLOG("before if (l == NULL) return NULL;\n");
   if (l == NULL) return NULL;
+  XLOG("before if (l == NULL) return NULL;\n");
   L = &l->l.l;
   g = &l->g;
   L->next = NULL;
@@ -306,6 +311,7 @@ LUA_API lua_State *lua_newstate (lua_Alloc f, void *ud) {
   g->gcstepmul = LUAI_GCMUL;
   for (i=0; i < LUA_NUMTAGS; i++) g->mt[i] = NULL;
   if (luaD_rawrunprotected(L, f_luaopen, NULL) != LUA_OK) {
+    XLOG("memory allocation error: set to NULL;\n");
     /* memory allocation error: free partial state */
     close_state(L);
     L = NULL;

@@ -141,6 +141,20 @@ LUA_API lua_CFunction lua_atpanic (lua_State *L, lua_CFunction panicf) {
 LUA_API void lua_setpico8memory (lua_State *L, unsigned char const *p) {
   lua_lock(L);
 XLOG("before G(L)->pico8memory = p;\n");
+if (L == NULL) {
+	XLOG("L == NULL\n");
+}
+else {
+	if (G(L)->pico8memory == NULL) {
+		XLOG("G(L)->pico8memory == NULL;\n");
+	}
+}
+if (p == NULL) {
+	XLOG("p == NULL\n");
+}
+else {
+	XLOG("p == [%s]\n", p);
+}
   G(L)->pico8memory = p;
 XLOG("after G(L)->pico8memory = p;\n");
   lua_unlock(L);
