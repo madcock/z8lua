@@ -589,11 +589,22 @@
 #define luai_numpeek2(L,a)	(lua_peek(L,a,2))
 #define luai_numpeek4(L,a)	(lua_peek(L,a,4))
 
+#if defined(SF2000)
+#undef LUA_NUMBER_SCAN
+#undef LUA_NUMBER_FMT
+#undef lua_number2str
+#undef LUAI_MAXNUMBER2STR
+#define LUA_NUMBER_SCAN		"%d"
+#define LUA_NUMBER_FMT		"%d"
+#define lua_number2str(s,n)	sprintf((s), LUA_NUMBER_FMT, int(n))
+#define LUAI_MAXNUMBER2STR	32 /* 16 digits, sign, point, and \0 */
+#else
 #define lua_number2str(s,n) [&]() { \
   int i = sprintf(s, "%1.4f", (double)n); \
   while (i > 0 && s[i - 1] == '0') s[--i] = '\0'; \
   if (i > 0 && s[i - 1] == '.') s[--i] = '\0'; \
   return i; }()
+#endif
 
 #define luai_hashnum(i,n) (i = (n * z8::fix32::frombits(2654435769u)).bits())
 

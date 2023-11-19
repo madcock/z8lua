@@ -34,6 +34,11 @@ struct fix32
         return double(m_bits) * (1.0 / 65536.0);
     }
 
+#if defined(SF2000)
+	inline fix32(signed int x)   : m_bits(int32_t(x << 16)) {}
+	inline fix32(unsigned int x) : m_bits(int32_t(x << 16)) {}
+#endif
+
     // Conversions up to int16_t are safe.
     inline fix32(int8_t x)  : m_bits(int32_t(x << 16)) {}
     inline fix32(uint8_t x) : m_bits(int32_t(x << 16)) {}
@@ -73,7 +78,13 @@ struct fix32
     // Additional casts for long and unsigned long on architectures where
     // these are not the same types as their cstdint equivalents.
     template<typename T,
+#if !defined(SF2000)
              typename std::enable_if<(std::is_same<T, long>::value ||
+#else
+             typename std::enable_if<(std::is_same<T, signed int>::value ||
+                                      std::is_same<T, unsigned int>::value ||
+                                      std::is_same<T, long>::value ||
+#endif
                                       std::is_same<T, unsigned long>::value) &&
                                      !std::is_same<T, int32_t>::value &&
                                      !std::is_same<T, uint32_t>::value &&

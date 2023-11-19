@@ -23,6 +23,11 @@
 
 #include "lauxlib.h"
 
+#if defined(SF2000)
+extern "C" {
+void xlog(const char *fmt, ...);
+}
+#endif
 
 /*
 ** {======================================================
@@ -200,6 +205,9 @@ LUALIB_API int luaL_error (lua_State *L, const char *fmt, ...) {
   lua_pushvfstring(L, fmt, argp);
   va_end(argp);
   lua_concat(L, 2);
+#if defined(SF2000)
+xlog("luaL_error: %s\n", fmt);
+#endif
   return lua_error(L);
 }
 
