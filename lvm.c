@@ -71,19 +71,11 @@ static void traceexec (lua_State *L) {
     luaD_hook(L, LUA_HOOKCOUNT, -1);  /* call count hook */
   if (mask & LUA_MASKLINE) {
     Proto *p = ci_func(ci)->p;
-#if !defined(TYPE_CONVERSION_FIXES)
     int npc = pcRel(ci->u.l.savedpc, p);
-#else
-	int npc = 0;
-#endif
     int newline = getfuncline(p, npc);
     if (npc == 0 ||  /* call linehook when enter a new function, */
-#if !defined(TYPE_CONVERSION_FIXES)
         ci->u.l.savedpc <= L->oldpc ||  /* when jump back (loop), or when */
         newline != getfuncline(p, pcRel(L->oldpc, p)))  /* enter a new line */
-#else
-        ci->u.l.savedpc <= L->oldpc)  /* enter a new line */
-#endif
       luaD_hook(L, LUA_HOOKLINE, newline);  /* call line hook */
   }
   L->oldpc = ci->u.l.savedpc;

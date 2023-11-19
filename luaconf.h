@@ -597,21 +597,12 @@
 
 #define luai_hashnum(i,n) (i = (n * z8::fix32::frombits(2654435769u)).bits())
 
-#if !defined(TYPE_CONVERSION_FIXES)
 static inline z8::fix32 operator/(z8::fix32 x, int y) { return x / z8::fix32(y); }
 static inline z8::fix32 operator+(int x, z8::fix32 y) { return z8::fix32(x) + y; }
 
 static inline bool operator==(z8::fix32 x, int y) { return x == z8::fix32(y); }
 static inline bool operator <(z8::fix32 x, int y) { return x  < z8::fix32(y); }
 static inline bool operator <(int x, z8::fix32 y) { return z8::fix32(x)  < y; }
-#else
-static inline z8::fix32 operator/(z8::fix32 x, int y) { return x / z8::fix32((int8_t)y); }
-static inline z8::fix32 operator+(int x, z8::fix32 y) { return z8::fix32((int8_t)x) + y; }
-
-static inline bool operator==(z8::fix32 x, int y) { return x == z8::fix32((int8_t)y); }
-static inline bool operator <(z8::fix32 x, int y) { return x  < z8::fix32((int8_t)y); }
-static inline bool operator <(int x, z8::fix32 y) { return z8::fix32((int8_t)x)  < y; }
-#endif
 
 #endif
 

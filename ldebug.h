@@ -11,9 +11,7 @@
 #include "lstate.h"
 
 
-#if !defined(TYPE_CONVERSION_FIXES)
 #define pcRel(pc, p)	(cast(int, (pc) - (p)->code) - 1)
-#endif
 
 #define getfuncline(f,pc)	(((f)->lineinfo) ? (f)->lineinfo[pc] : 0)
 

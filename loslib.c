@@ -120,11 +120,7 @@ static int os_getenv (lua_State *L) {
 
 
 static int os_clock (lua_State *L) {
-#if !defined(TYPE_CONVERSION_FIXES)
   lua_pushnumber(L, ((lua_Number)clock())/(lua_Number)CLOCKS_PER_SEC);
-#else
-  lua_pushnumber(L, ((lua_Number)clock())/(lua_Number)(int8_t)CLOCKS_PER_SEC);
-#endif
   return 1;
 }
 
@@ -269,11 +265,7 @@ static int os_time (lua_State *L) {
 
 static int os_difftime (lua_State *L) {
   lua_pushnumber(L, difftime((time_t)(luaL_checknumber(L, 1)),
-#if !defined(TYPE_CONVERSION_FIXES)
                              (time_t)(luaL_optnumber(L, 2, 0))));
-#else
-                             (time_t)(luaL_optnumber(L, 2, (int8_t)0))));
-#endif
   return 1;
 }
 

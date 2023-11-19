@@ -51,10 +51,6 @@ const char lua_ident[] =
 #define api_checkstackindex(L, i, o)  \
 	api_check(L, isstackindex(i, o), "index not in the stack")
 
-extern "C" {
-void xlog(const char *fmt, ...);
-#define XLOG(format, ...) xlog("%s:%d:%s " format, __FILE__, __LINE__, __func__, ##__VA_ARGS__)
-}
 
 static TValue *index2addr (lua_State *L, int idx) {
   CallInfo *ci = L->ci;
@@ -140,23 +136,7 @@ LUA_API lua_CFunction lua_atpanic (lua_State *L, lua_CFunction panicf) {
 
 LUA_API void lua_setpico8memory (lua_State *L, unsigned char const *p) {
   lua_lock(L);
-XLOG("before G(L)->pico8memory = p;\n");
-if (L == NULL) {
-	XLOG("L == NULL\n");
-}
-else {
-	if (G(L)->pico8memory == NULL) {
-		XLOG("G(L)->pico8memory == NULL;\n");
-	}
-}
-if (p == NULL) {
-	XLOG("p == NULL\n");
-}
-else {
-	XLOG("p == [%s]\n", p);
-}
   G(L)->pico8memory = p;
-XLOG("after G(L)->pico8memory = p;\n");
   lua_unlock(L);
 }
 
@@ -368,12 +348,7 @@ LUA_API lua_Number lua_tonumberx (lua_State *L, int idx, int *isnum) {
   }
   else {
     if (isnum) *isnum = 0;
-#if !defined(TYPE_CONVERSION_FIXES)
     return 0;
-#else
-    return (int8_t)0;
-#endif
-
   }
 }
 

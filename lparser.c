@@ -1381,11 +1381,7 @@ static void fornum (LexState *ls, TString *varname, int line) {
   if (testnext(ls, ','))
     exp1(ls);  /* optional step */
   else {  /* default step = 1 */
-#if !defined(TYPE_CONVERSION_FIXES)
     luaK_codek(fs, fs->freereg, luaK_numberK(fs, 1));
-#else
-    luaK_codek(fs, fs->freereg, luaK_numberK(fs, (int8_t)1));
-#endif
     luaK_reserveregs(fs, 1);
   }
   forbody(ls, base, line, 1, 1);

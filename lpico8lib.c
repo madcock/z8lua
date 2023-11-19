@@ -213,11 +213,7 @@ static int pico8_tonum(lua_State *l) {
     uint16_t flags = numargs > 1 ? lua_tointeger(l, 2) : 0;
 
     if (lua_isboolean(l, 1)){
-#if !defined(TYPE_CONVERSION_FIXES)
         lua_pushnumber(l, lua_toboolean(l, 1));
-#else
-        lua_pushnumber(l, (int8_t)lua_toboolean(l, 1));
-#endif
         return 1;
     }
     if (lua_isstring(l, 1)) {

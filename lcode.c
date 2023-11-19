@@ -762,11 +762,7 @@ static void codecomp (FuncState *fs, OpCode op, int cond, expdesc *e1,
 
 void luaK_prefix (FuncState *fs, UnOpr op, expdesc *e, int line) {
   expdesc e2;
-#if !defined(TYPE_CONVERSION_FIXES)
   e2.t = e2.f = NO_JUMP; e2.k = VKNUM; e2.u.nval = 0;
-#else
-  e2.t = e2.f = NO_JUMP; e2.k = VKNUM; e2.u.nval = (int8_t)0;
-#endif
   switch (op) {
     case OPR_MINUS: {
       if (isnumeral(e))  /* minus constant? */
